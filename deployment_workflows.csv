@@ -1,0 +1,5 @@
+repo,workflow_file,tools
+https://github.com/fastapi/fastapi,.github/workflows/deploy-docs.yml,-
+https://github.com/fastapi/fastapi,.github/workflows/publish.yml,astral_uv
+https://github.com/pypa/wheel,.github/workflows/publish.yml,pypa
+https://github.com/encode/httpx,.github/workflows/publish.yml,-
