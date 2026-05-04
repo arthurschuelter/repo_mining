@@ -106,7 +106,7 @@ class Processor:
         versioning_tools = {item.normalized_tool for item in versioning_evidence}
 
         testing_in_ci = YES if any(item.file_type in candidates.workflow_file_types for item in testing_evidence) else NO
-        versioning_automated = YES if versioning_tools.intersection(VERSION_AUTOMATION_TOOLS) else NO
+        versioning_automated = YES if any(item.file_type in candidates.workflow_file_types for item in versioning_evidence) else NO
         versioning_strategy = self._build_versioning_strategy(versioning_tools)
         cd_present = YES if deployment_tools else NO
         ci_present = YES if ci_tools else NO
