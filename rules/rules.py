@@ -122,7 +122,7 @@ RULES = (
     Rule((r"\bsemantic versioning\b", r"\bsemver\b"), "semantic-versioning", TASK_VERSION_CONTROL),
     Rule((r"\bcalendar versioning\b", r"\bcalver\b"), "calendar-versioning", TASK_VERSION_CONTROL),
     Rule((r"(^|\n)\s*release\s*:",), "github-releases", TASK_VERSION_CONTROL),
-    Rule((r"(^|\n)\s*workflow_dispatch\s*:",), "manual-dispatch", TASK_VERSION_CONTROL),
+    #Rule((r"(^|\n)\s*workflow_dispatch\s*:",), "manual-dispatch", TASK_VERSION_CONTROL),
     Rule((r"\brefs/tags\b|(^|\n)\s*tags\s*:",), "release-tags", TASK_VERSION_CONTROL)
 )
 
