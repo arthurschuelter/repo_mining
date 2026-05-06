@@ -16,7 +16,6 @@ six,https://github.com/benjaminp/six,14
 numpy,https://github.com/numpy/numpy,15
 cffi,https://github.com/python-cffi/cffi,16
 pyyaml,https://github.com/yaml/pyyaml,17
-grpcio-status,https://github.com/grpc/grpc,18
 pycparser,https://github.com/eliben/pycparser,19
 pydantic,https://github.com/pydantic/pydantic,20
 pluggy,https://github.com/pytest-dev/pluggy,21
@@ -24,8 +23,6 @@ s3transfer,https://github.com/boto/s3transfer,22
 pygments,https://github.com/pygments/pygments,23
 click,https://github.com/pallets/click,24
 attrs,https://github.com/python-attrs/attrs,25
-protobuf,https://github.com/protocolbuffers/protobuf,26
-pydantic-core,https://github.com/pydantic/pydantic/tree/main/pydantic-core,27
 anyio,https://github.com/agronholm/anyio,28
 fsspec,https://github.com/fsspec/filesystem_spec,29
 pandas,https://github.com/pandas-dev/pandas,30
@@ -56,7 +53,6 @@ jsonschema,https://github.com/python-jsonschema/jsonschema,54
 yarl,https://github.com/aio-libs/yarl,55
 multidict,https://github.com/aio-libs/multidict,56
 aiohttp,https://github.com/aio-libs/aiohttp,57
-google-auth,https://github.com/googleapis/google-auth-library-python,58
 uvicorn,https://github.com/Kludex/uvicorn,59
 markdown-it-py,https://github.com/executablebooks/markdown-it-py,60
 google-api-core,https://github.com/googleapis/google-cloud-python,61
@@ -64,7 +60,6 @@ tzdata,https://github.com/python/tzdata,62
 tqdm,https://github.com/tqdm/tqdm,63
 tomli,https://github.com/hukkin/tomli,64
 colorama,https://github.com/tartley/colorama,65
-googleapis-common-protos,https://github.com/googleapis/google-cloud-python/tree/main/packages/googleapis-common-protos,66
 mdurl,https://github.com/executablebooks/mdurl,67
 starlette,https://github.com/Kludex/starlette,68
 virtualenv,https://github.com/pypa/virtualenv,69
@@ -76,14 +71,12 @@ scipy,https://github.com/scipy/scipy,74
 rpds-py,https://github.com/crate-py/rpds,75
 trove-classifiers,https://github.com/pypa/trove-classifiers,76
 fastapi,https://github.com/fastapi/fastapi,77
-rsa,https://github.com/sybrenstuvel/python-rsa,78
 referencing,https://github.com/python-jsonschema/referencing,79
 wrapt,https://github.com/GrahamDumpleton/wrapt,80
 pyasn1-modules,https://github.com/pyasn1/pyasn1-modules,81
 aiosignal,https://github.com/aio-libs/aiosignal,82
 jsonschema-specifications,https://github.com/python-jsonschema/jsonschema-specifications,83
 greenlet,https://github.com/python-greenlet/greenlet,84
-grpcio,https://github.com/grpc/grpc,85
 sqlalchemy,https://github.com/sqlalchemy/sqlalchemy,86
 requests-oauthlib,https://github.com/requests/requests-oauthlib,87
 pyarrow,https://github.com/apache/arrow,88
@@ -98,4 +91,3 @@ psutil,https://github.com/giampaolo/psutil,96
 opentelemetry-semantic-conventions,https://github.com/open-telemetry/opentelemetry-python,97
 hatchling,https://github.com/pypa/hatch,98
 oauthlib,https://github.com/oauthlib/oauthlib,99
-opentelemetry-sdk,https://github.com/open-telemetry/opentelemetry-python,100
