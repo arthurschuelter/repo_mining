@@ -68,9 +68,7 @@ def yes_pct(series):
 def plot_rq1(ev, rs):
     """
     Left:  Bar — how many repos have evidence for each pipeline stage
-    Right: Heatmap — log-scaled evidence row count per repo × stage
-           (rows sorted by total evidence; top 30 repos shown)
-           Reveals where each repo concentrates its deployment activity.
+    Right: Bar — distribution of how many stages each repo covers (1–7)
     """
     fig, axes = plt.subplots(1, 2, figsize=(16, 7))
     fig.suptitle(
@@ -109,41 +107,31 @@ def plot_rq1(ev, rs):
             f'{row["repos"]}  ({pct:.0f}%)', va="center", fontsize=8
         )
 
-    # ── right: heatmap — log(evidence rows) per repo × stage ─────────────────
-    pivot = (
-        ev.groupby(["repo", "task_category"])
-        .size()
-        .unstack(fill_value=0)
+    # ── right: stage count distribution ──────────────────────────────────────
+    # count how many distinct stages each repo covers
+    stages_per_repo = (
+        ev.groupby("repo")["task_category"]
+        .nunique()
+        .value_counts()
+        .sort_index()
+        .reset_index()
     )
-    # keep defined stages that exist
-    stage_cols = [s for s in PIPELINE_STAGES if s in pivot.columns]
-    pivot = pivot[stage_cols]
-    pivot.columns = [STAGE_LABELS[c] for c in stage_cols]
-
-    # sort by total evidence, take top 30
-    pivot = pivot.loc[pivot.sum(axis=1).sort_values(ascending=False).index].head(30)
-    pivot.index = [r.split("/")[-1] for r in pivot.index]
-
-    # log-transform for readability (many zeros become 0 after log1p)
-    log_pivot = np.log1p(pivot)
+    stages_per_repo.columns = ["stages_covered", "repos"]
 
     ax = axes[1]
-    sns.heatmap(
-        log_pivot, ax=ax,
-        cmap="YlOrRd",
-        linewidths=0.3, linecolor="white",
-        annot=pivot.values,          # show raw counts
-        fmt=".0f",
-        annot_kws={"size": 6},
-        cbar_kws={"label": "log(1 + evidence rows)"},
+    sns.barplot(
+        data=stages_per_repo, x="stages_covered", y="repos",
+        ax=ax, palette="crest",
     )
-    ax.set_title(
-        "Evidence rows per repo × pipeline stage\n(top 30 repos; colour = log scale, numbers = raw count)"
-    )
-    ax.set_xlabel("")
-    ax.set_ylabel("")
-    ax.tick_params(axis="x", rotation=35, labelsize=8)
-    ax.tick_params(axis="y", labelsize=7)
+    ax.set_title(f"How many pipeline stages does each repo cover?\n(n = {total_repos} repos)")
+    ax.set_xlabel("Number of pipeline stages covered (out of 7)")
+    ax.set_ylabel("Number of repos")
+    for bar, (_, row) in zip(ax.patches, stages_per_repo.iterrows()):
+        pct = row["repos"] / total_repos * 100
+        ax.text(
+            bar.get_x() + bar.get_width() / 2, row["repos"] + 0.3,
+            f'{row["repos"]}\n({pct:.0f}%)', ha="center", va="bottom", fontsize=8
+        )
 
     plt.tight_layout()
     plt.savefig("outputs/rq1_deployment_tasks.png", dpi=150, bbox_inches="tight")
@@ -160,12 +148,27 @@ def plot_rq2(ev, rs):
         fontsize=13, fontweight="bold",
     )
 
-    # top-left: top 15 normalised tools overall
-    tool_df = top_counts(ev["normalized_tool"].dropna().tolist(), n=15)
-    sns.barplot(data=tool_df, x="count", y="label", ax=axes[0, 0], palette="crest")
-    axes[0, 0].set_title("Top 15 tools (all evidence rows)")
-    axes[0, 0].set_xlabel("occurrences")
+    # top-left: top 15 tools by distinct repos
+    total_repos = ev["repo"].nunique()
+    tool_df = (
+        ev.drop_duplicates(subset=["repo", "normalized_tool"])
+        .groupby("normalized_tool")["repo"]
+        .nunique()
+        .reset_index()
+        .rename(columns={"repo": "repos", "normalized_tool": "label"})
+        .sort_values("repos", ascending=False)
+        .head(15)
+        .sort_values("repos")
+    )
+    bars = sns.barplot(data=tool_df, x="repos", y="label", ax=axes[0, 0], palette="crest")
+    axes[0, 0].set_title(f"Top 15 tools by number of repos\n(n = {total_repos} repos)")
+    axes[0, 0].set_xlabel("repos")
     axes[0, 0].set_ylabel("")
+    axes[0, 0].set_xlim(0, total_repos + 8)
+    for bar, val in zip(bars.patches, tool_df["repos"]):
+        pct = val / total_repos * 100
+        axes[0, 0].text(val + 0.5, bar.get_y() + bar.get_height() / 2,
+                        f"{val}  ({pct:.0f}%)", va="center", fontsize=7.5)
 
     # top-right: distinct tools per pipeline stage
     stage_tool = (
@@ -320,11 +323,11 @@ def plot_rq4(ev, rs):
     )
     axes[1].set_xlabel("repos (can overlap — one repo may use\na file type for multiple stages)")
     axes[1].set_ylabel("")
-    axes[1].legend(loc="lower right", fontsize=6.5, title="Stage", title_fontsize=7)
+    axes[1].legend(loc="upper right", fontsize=6.5, title="Stage", title_fontsize=7)
 
-    # ── right: heatmap — row-normalised % ────────────────────────────────────
-    # Normalise: for each file type, divide by number of repos that use it
-    norm_pivot = pivot.div(ftype_totals.loc[pivot.index].values, axis=0) * 100
+    # ── right: heatmap — normalised by total repos ───────────────────────────
+    # Each cell: % of all repos that use this file type for this stage
+    norm_pivot = pivot / total_repos * 100
 
     ax = axes[2]
     sns.heatmap(
@@ -333,11 +336,11 @@ def plot_rq4(ev, rs):
         linewidths=0.4, linecolor="white",
         annot=True, fmt=".0f",
         annot_kws={"size": 7},
-        cbar_kws={"label": "% of repos using this file type"},
+        cbar_kws={"label": "% of all repos"},
         vmin=0, vmax=100,
     )
     ax.set_title(
-        "% of repos (using file type)\nthat use it for each pipeline stage"
+        "% of all repos that use\neach file type for each pipeline stage"
     )
     ax.set_xlabel("")
     ax.set_ylabel("")
