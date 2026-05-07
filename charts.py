@@ -1,5 +1,5 @@
 """
-charts.py — Visualisations for "Mining Deployment Tasks in Software Repositories"
+charts.py — Visualizations for "Mining Deployment Tasks in Software Repositories"
 One figure per research question.
 
 Usage
