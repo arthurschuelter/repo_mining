@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 import argparse
 import csv
 from pathlib import Path
@@ -15,9 +13,9 @@ EVIDENCE_FIELDS = list(Evidence.__dataclass_fields__.keys())
 def parse_args() -> argparse.Namespace:
     """Build and parse the command-line arguments for the mining pipeline."""
     parser = argparse.ArgumentParser(description="Mine deployment evidence from Python package repositories.")
-    parser.add_argument("repos_csv", help="CSV catalog with repo_name/repo_url columns or compatible aliases.")
+    parser.add_argument("--repos_csv", help="CSV catalog with repo_name/repo_url columns.")
     parser.add_argument(
-        "--output-dir",
+        "--output_dir",
         default=str(DEFAULT_OUTPUT_DIR),
         help="Directory where evidence.csv and repo_summary.csv will be written.",
     )
