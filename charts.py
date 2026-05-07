@@ -223,34 +223,88 @@ def plot_rq3(ev, rs):
         "CD / deployment present":  yes_pct(rs["cd_present"]),
         "Versioning automated":     yes_pct(rs["versioning_automated"]),
     }
+
     flag_df = pd.DataFrame(flags.items(), columns=["flag", "pct"]).sort_values("pct")
-    bars = sns.barplot(data=flag_df, x="pct", y="flag", ax=axes[0], palette="crest")
+
+    bars = sns.barplot(
+        data=flag_df,
+        x="pct",
+        y="flag",
+        ax=axes[0],
+        palette="crest"
+    )
+
     axes[0].set_title(f"Automation flag adoption\n(n = {len(rs)} repos)")
     axes[0].set_xlabel("% of repos")
     axes[0].set_ylabel("")
     axes[0].set_xlim(0, 115)
+
     for bar, val in zip(bars.patches, flag_df["pct"]):
-        axes[0].text(val + 1, bar.get_y() + bar.get_height() / 2,
-                     f"{val:.0f}%", va="center", fontsize=9)
+        axes[0].text(
+            val + 1,
+            bar.get_y() + bar.get_height() / 2,
+            f"{val:.0f}%",
+            va="center",
+            fontsize=9
+        )
 
     # middle: deployment tools (CD repos only)
     cd_repos = rs[rs["cd_present"].str.strip().str.lower() == "yes"]
+
     dep_df = top_counts(split_col(cd_repos["deployment_tools"]), n=10)
-    sns.barplot(data=dep_df, x="count", y="label", ax=axes[1], palette="flare")
-    axes[1].set_title(f"Deployment tools used\n(repos with CD present, n = {len(cd_repos)})")
+
+    bars = sns.barplot(
+        data=dep_df,
+        x="count",
+        y="label",
+        ax=axes[1],
+        palette="flare"
+    )
+
+    axes[1].set_title(
+        f"Deployment tools used\n(repos with CD present, n = {len(cd_repos)})"
+    )
     axes[1].set_xlabel("repos")
     axes[1].set_ylabel("")
 
+    for bar, val in zip(bars.patches, dep_df["count"]):
+        axes[1].text(
+            val + 0.5,
+            bar.get_y() + bar.get_height() / 2,
+            f"{val}",
+            va="center",
+            fontsize=9
+        )
+
     # right: versioning strategies
     vs_df = top_counts(split_col(rs["versioning_strategy"]), n=8)
-    sns.barplot(data=vs_df, x="count", y="label", ax=axes[2], palette="mako")
+    vs_df["pct"] = vs_df["count"] / len(rs) * 100
+
+    bars = sns.barplot(
+        data=vs_df,
+        x="pct",
+        y="label",
+        ax=axes[2],
+        palette="mako"
+    )
+
     axes[2].set_title("Versioning strategies")
-    axes[2].set_xlabel("repos")
+    axes[2].set_xlabel("% of repos")
     axes[2].set_ylabel("")
+
+    for bar, val in zip(bars.patches, vs_df["pct"]):
+        axes[2].text(
+            val + 1,
+            bar.get_y() + bar.get_height() / 2,
+            f"{val:.1f}%",
+            va="center",
+            fontsize=9
+        )
 
     plt.tight_layout()
     plt.savefig("outputs/rq3_automation_levels.png", dpi=150, bbox_inches="tight")
     plt.show()
+
     print("Saved outputs/rq3_automation_levels.png")
 
 
@@ -371,7 +425,7 @@ if __name__ == "__main__":
     print(f"Loaded {len(rs):,} repo-summary rows")
     print()
 
-    plot_rq1(ev, rs)
-    plot_rq2(ev, rs)
+    # plot_rq1(ev, rs)
+    # plot_rq2(ev, rs)
     plot_rq3(ev, rs)
-    plot_rq4(ev, rs)
+    # plot_rq4(ev, rs)
