@@ -14,7 +14,7 @@
 python main.py --repos_csv repos.csv --output_dir ./outputs
 ```
 
-* To run the post-processing script and generate graphics
+* To run the post-processing script and generate charts:
 ```bash
 python charts.py evidence.csv repo_summary.csv
 ```
