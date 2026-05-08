@@ -1,3 +1,5 @@
+"File containing all rules used to identify and classify evidences of repository code"
+
 from dataclasses import dataclass
 
 TASK_VERSION_CONTROL = "version_control_system"
